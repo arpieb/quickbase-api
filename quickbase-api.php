@@ -219,6 +219,11 @@ class QuickBaseAPI {
 
   /**
    * Method to generate debug output
+   * 
+   * @param label   Label to associate with the data being dumped
+   * @param data    Data to dump; objects and arrays OK
+   * 
+   * @return None
    */
   protected function debugOut($label, $data) {
     if ($this->debug) {
@@ -233,6 +238,8 @@ class QuickBaseAPI {
    * Enables debugging output; off by default
    * 
    * @param debug   TRUE to enable debug output, FALSE to disable
+   * 
+   * @return None
    */
   public function Debug($debug = TRUE) {
     $this->debug = $debug;
@@ -561,23 +568,144 @@ class QuickBaseAPI {
 
   /**
    * http://www.quickbase.com/api-guide/delete_field.html
+   * 
+   * @param dbid    Database ID to execute query against
+   * @param fid     The field ID of the field to be deleted
+   * 
+   * @return Returns FALSE on error, response object on success
    */
-  public function DeleteField() {}
+  public function DeleteField($dbid, $fid) {
+    $resp = FALSE;
+    if ($this->Authenticate()) {
+      // Assemble params for call
+      $params = array(
+        'fid' => $fid
+      );
+      $resp = $this->sendRequest('API_DeleteField', $params, $dbid);
+    }
+    return $resp;
+  }
 
   /**
    * http://www.quickbase.com/api-guide/delete_record.html
+   * 
+   * @param dbid    Database ID to execute query against
+   * @param rid     The record ID of the record to be deleted
+   * 
+   * @return Returns FALSE on error, response object on success
    */
-  public function DeleteRecord() {}
+  public function DeleteRecord($dbid, $rid) {
+    $resp = FALSE;
+    if ($this->Authenticate()) {
+      // Assemble params for call
+      $params = array(
+        'rid' => $rid
+      );
+      $resp = $this->sendRequest('API_DeleteRecord', $params, $dbid);
+    }
+    return $resp;
+  }
 
   /**
    * http://www.quickbase.com/api-guide/do_query.html
+   * 
+   * @param dbid      Database ID to execute query against
+   * @param query     Can be one of the following:
+   *                  Array of one or more queries (e.g. {'5'.CT.'Ragnar Lodbrok'})
+   *                  Query ID (numeric)
+   *                  Query name (alphanumeric)
+   * @param clist     Can be one of the following:
+   *                  Array of field IDs to be returned
+   *                  'a' for all fields
+   *                  NULL or empty array to return default fields
+   * @param slist     Can be one of the following:
+   *                  Array of field IDs to sort on
+   *                  NULL or empty array to use default sort fields
+   * @param fmt       Set this parameter to "structured" to specify that the query should return structured data
+   * @param options   Array of optional query options, name-value pairs:
+   *                  returnpercentage    Specifies whether Numeric - Percent values in the returned data will be percentage format (10% is shown as 10) or decimal format (10% is shown as .1)
+   *                  options             Specifies return options for the query (see API call page)
+   *                  includeRids         Specifies that the record IDs of each record should be returned
+   * 
+   * @return Returns FALSE on error, response object on success
    */
-  public function DoQuery() {}
+  public function DoQuery($dbid, $query, $clist = array(), $slist = array(), $fmt = 'structured', $options = array()) {
+    $resp = FALSE;
+    if ($this->Authenticate()) {
+      $params = array(
+        'fmt' => $fmt,
+      );
+
+      // Build out query portion
+      if (is_numeric($query)) {
+        // Handle query ID
+        $params['qid'] = $query;
+      }
+      elseif (is_array($query)) {
+        // Handle array of queries
+        $params['query'] = $query;
+      }
+      else {
+        // Assume anything else is a query name
+        $params['qname'] = $query;
+      }
+
+      // Build return and sort lists
+      if (!empty($clist)) {
+        $param['clist'] = implode('.', $clist);
+      }
+      if (!empty($slist)) {
+        $param['slist'] = implode('.', $slist);
+      }
+      
+      // Add options
+      if (!empty($options)) {
+        foreach ($options as $opt_name => $opt_value) {
+          $param[$opt_name] = $opt_value;
+        }
+      }
+
+      // Execute query
+      $resp = $this->sendRequest('API_DoQuery', $params, $dbid);
+    }
+    return $resp;
+  }
 
   /**
    * http://www.quickbase.com/api-guide/do_query_count.html
+   * 
+   * @param dbid      Database ID to execute query against
+   * @param query     Can be one of the following:
+   *                  Array of one or more queries (e.g. {'5'.CT.'Ragnar Lodbrok'})
+   *                  Query ID (numeric)
+   *                  Query name (alphanumeric)
+   * 
+   * @return Returns FALSE on error, response object on success
    */
-  public function DoQueryCount() {}
+  public function DoQueryCount($dbid, $query) {
+    $resp = FALSE;
+    if ($this->Authenticate()) {
+      $params = array();
+
+      // Build out query portion
+      if (is_numeric($query)) {
+        // Handle qeury ID
+        $params['qid'] = $query;
+      }
+      elseif (is_array($query)) {
+        // Handle array of queries
+        $params['query'] = $query;
+      }
+      else {
+        // Assume anything else is a query name
+        $params['qname'] = $query;
+      }
+
+      // Execute query
+      $resp = $this->sendRequest('API_DoQueryCount', $params, $dbid);
+    }
+    return $resp;
+  }
 
   /**
    * http://www.quickbase.com/api-guide/edit_record.html
