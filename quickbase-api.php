@@ -85,26 +85,26 @@ class QuickBaseAPI {
     if (!$params) {
       $params = array();
     }
-    if ($this->ticket) {
+    if (empty($params['ticket']) && $this->ticket) {
       $params['ticket'] = $this->ticket;
     }
-    if (!empty($this->apptoken)) {
+    if (empty($params['apptoken']) && !empty($this->apptoken)) {
       $params['apptoken'] = $this->apptoken;
     }
     $this->debugOut('Request params prior to XML construction', $params);
     $xml = new SimpleXMLElement('<qdbapi></qdbapi>');
     foreach ($params as $name => $value) {
-      if (!empty($value)) {
+      if (isset($value)) {
         // Check to see if this value is actually an array
         if (is_array($value)) {
           foreach ($value as $item_key => $item_value) {
             // If the nested item is an array, look for 'data' and 'attributes' keys
             if (is_array($item_value)) {
-              if (!empty($item_value['data'])) {
+              if (isset($item_value['data'])) {
                 $child = $xml->addChild($name, $item_value['data']);
 
                 // Check for attributes, add to the element
-                if (!empty($item_value['attributes']) && is_array($item_value['attributes'])) {
+                if (isset($item_value['attributes']) && is_array($item_value['attributes'])) {
                   foreach ($item_value['attributes'] as $attr_name => $attr_value) {
                     $child->addAttribute($attr_name, $attr_value);
                   }
@@ -220,11 +220,10 @@ class QuickBaseAPI {
   /**
    * Method to generate debug output
    */
-  function debugOut($label, $data) {
-    if (!$this->debug) {
-      return;
+  protected function debugOut($label, $data) {
+    if ($this->debug) {
+      echo "{$label}:\n<pre>\n" . print_r($data, TRUE) . "\n</pre>\n";
     }
-    echo "{$label}:\n<pre>\n" . print_r($data, TRUE) . "\n</pre>\n";
   }
 
   //////////////////////////////////////////////////////////////////////
@@ -232,6 +231,8 @@ class QuickBaseAPI {
   //////////////////////////////////////////////////////////////////////
   /**
    * Enables debugging output; off by default
+   * 
+   * @param debug   TRUE to enable debug output, FALSE to disable
    */
   public function Debug($debug = TRUE) {
     $this->debug = $debug;
@@ -275,6 +276,8 @@ class QuickBaseAPI {
    *                  fform         Set this parameter to 1 if you are invoking API_AddRecord from within an HTML form that has checkboxes and want those checkboxes to set QuickBase checkbox fields
    *                  ignoreError   Set this parameter to 1 to specify that no error should be returned when a built-in field (for example, Record ID#) is written-to in an API_AddRecord call
    *                  msInUTC       Allows you to specify that QuickBase should interpret all date/time stamps passed in as milliseconds using Coordinated Universal Time (UTC) rather than using the local application time
+   * 
+   * @return Returns FALSE on error, response object on success
    */
   public function AddRecord($dbid, $record, $options = array()) {
     $resp = FALSE;
@@ -307,13 +310,53 @@ class QuickBaseAPI {
 
   /**
    * http://www.quickbase.com/api-guide/add_replace_dbpage.html
+   * 
+   * @param dbid        Database ID to execute query against
+   * @param pageid      Allows you to specify a new page to add or an existing page to replace
+   *                    ID    Update existing page
+   *                    Name  Add new page
+   * @param pagetype    Specifies the type of page
+   *                    1 - for XSL stylesheets or HTML pages
+   *                    3 – for Exact Forms
+   * @param pagebody    Contains the contents of the page you are adding
+   * 
+   * @return Returns FALSE on error, response object on success
    */
-  public function AddReplaceDBPage() {}
+  public function AddReplaceDBPage($dbid, $pageid, $pagetype, $pagebody) {
+    $resp = FALSE;
+    if ($this->Authenticate()) {
+      // Assemble params for call
+      $params = array(
+        'pagetype' => $pagetype,
+        'pagebody' => $pagebody,
+      );
+      $params[is_numeric($pageid) ? 'pageid' : 'pagename'] = $pageid;
+      $resp = $this->sendRequest('API_AddReplaceDBPage', $params, $dbid);
+    }
+    return $resp;
+  }
 
   /**
    * http://www.quickbase.com/api-guide/add_user_to_role.html
+   * 
+   * @param dbid      Database ID to execute query against
+   * @param userid    The userid of the user to be added to the access role
+   * @param roleid    The ID of the access role being assigned to the user
+   * 
+   * @return Returns FALSE on error, response object on success
    */
-  public function AddUserToRole() {}
+  public function AddUserToRole($dbid, $userid, $roleid) {
+    $resp = FALSE;
+    if ($this->Authenticate()) {
+      // Assemble params for call
+      $params = array(
+        'userid' => $userid,
+        'roleid' => $roleid,
+      );
+      $resp = $this->sendRequest('API_AddUserToRole', $params, $dbid);
+    }
+    return $resp;
+  }
 
   /**
    * http://www.quickbase.com/api-guide/authenticate.html
@@ -364,18 +407,81 @@ class QuickBaseAPI {
 
   /**
    * http://www.quickbase.com/api-guide/change_record_owner.html
+   * 
+   * @param dbid        Database ID to execute query against
+   * @param rid         The record ID. Every record in every table has a unique rid.
+   * @param newowner    Specifies the user to whom you are transferring ownership:
+   *                    the user's QuickBase user name
+   *                    the user's email address
+   * 
+   * @return Returns FALSE on error, response object on success
    */
-  public function ChangeRecordOwner() {}
+  public function ChangeRecordOwner($dbid, $rid, $newowner) {
+    $resp = FALSE;
+    if ($this->Authenticate()) {
+      // Assemble params for call
+      $params = array(
+        'rid' => $rid,
+        'newowner' => $newowner,
+      );
+      $resp = $this->sendRequest('API_ChangeRecordOwner', $params, $dbid);
+    }
+    return $resp;
+  }
 
   /**
    * http://www.quickbase.com/api-guide/change_user_role.html
+   * 
+   * @param dbid        Database ID to execute query against
+   * @param userid      The userid of the user to be added to the access role
+   * @param roleid      The user’s current role in the application
+   * @param newroleid   If this parameter is supplied but is left blank, the role is set to None
+   * 
+   * @return Returns FALSE on error, response object on success
    */
-  public function ChangeUserRole() {}
+  public function ChangeUserRole($dbid, $userid, $roleid, $newroleid = '') {
+    $resp = FALSE;
+    if ($this->Authenticate()) {
+      // Assemble params for call
+      $params = array(
+        'userid' => $userid,
+        'roleid' => $roleid,
+        'newroleid' => $newroleid,
+      );
+      $resp = $this->sendRequest('API_ChangeUserRole', $params, $dbid);
+    }
+    return $resp;
+  }
 
   /**
    * http://www.quickbase.com/api-guide/clone_database.html
+   * 
+   * @param dbid            Database ID to execute query against
+   * @param newdbname       Specifies a name for the new application
+   * @param newdbdesc       Specifies the description for the new application
+   * @param keepData        Set this parameter to TRUE if you want to copy the application's data
+   * @param excludefiles    Specifies that you do not want to copy file attachments when you copy an application
+   * 
+   * @return Returns FALSE on error, response object on success
    */
-  public function CloneDatabase() {}
+  public function CloneDatabase($dbid, $newdbname, $newdbdesc = '', $keepData = FALSE, $excludefiles = TRUE) {
+    $resp = FALSE;
+    if ($this->Authenticate()) {
+      // Assemble params for call
+      $params = array(
+        'newdbname' => $newdbname,
+        'newdbdesc' => $newdbdesc,
+      );
+      if ($keepData) {
+        $params['keepData'] = 1;
+        if ($excludefiles) {
+          $params['excludefiles'] = 1;
+        }
+      }
+      $resp = $this->sendRequest('API_CloneDatabase', $params, $dbid);
+    }
+    return $resp;
+  }
 
   /**
    * http://www.quickbase.com/api-guide/API_CopyMasterDetail.htm
@@ -384,8 +490,28 @@ class QuickBaseAPI {
 
   /**
    * http://www.quickbase.com/api-guide/create_database.html
+   * 
+   * @param dbname            The name of the new application
+   * @param dbdesc            The description for the new application
+   * @param createapptoken    Set this parameter to 1 to generate an application token for your applications
+   * 
+   * @return Returns FALSE on error, response object on success
    */
-  public function CreateDatabase() {}
+  public function CreateDatabase($dbname, $dbdesc = '', $createapptoken = FALSE) {
+    $resp = FALSE;
+    if ($this->Authenticate()) {
+      // Assemble params for call
+      $params = array(
+        'dbname' => $dbname,
+        'dbdesc' => $dbdesc,
+      );
+      if ($createapptoken) {
+        $params['createapptoken'] = 1;
+      }
+      $resp = $this->sendRequest('API_CreateDatabase', $params, 'main');
+    }
+    return $resp;
+  }
 
   /**
    * http://www.quickbase.com/api-guide/create_table.html
@@ -414,8 +540,24 @@ class QuickBaseAPI {
 
   /**
    * http://www.quickbase.com/api-guide/delete_database.html
+   * 
+   * @param dbid        Database ID to execute query against
+   * @param apptoken    A valid application token, if the application requires application tokens
+   * 
+   * @return Returns FALSE on error, response object on success
    */
-  public function DeleteDatabase() {}
+  public function DeleteDatabase($dbid, $apptoken = NULL) {
+    $resp = FALSE;
+    if ($this->Authenticate()) {
+      // Assemble params for call
+      $params = array();
+      if ($apptoken) {
+        $params['apptoken'] = $apptoken;
+      }
+      $resp = $this->sendRequest('API_DeleteDatabase', $params, $dbid);
+    }
+    return $resp;
+  }
 
   /**
    * http://www.quickbase.com/api-guide/delete_field.html
