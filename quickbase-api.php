@@ -27,7 +27,7 @@ class QuickBaseAPI {
   // Properties set when an error occurs at the XML, cURL or API level
   var $errno = 0;
   var $errmsg = '';
-  
+
   // Internal debugging properties
   var $debug = FALSE;
 
@@ -141,6 +141,7 @@ class QuickBaseAPI {
       $headers[] = 'Content-Type: application/xml';
       $headers[] = 'Content-Length: ' . strlen($xml);
       $headers[] = 'QUICKBASE-ACTION: ' . $fn;
+      $this->debugOut('Request HTTP headers', $headers);
 
       $ch = curl_init($url);
       if (FALSE !== $ch) {
@@ -699,7 +700,7 @@ class QuickBaseAPI {
       if (!empty($slist)) {
         $params['slist'] = implode('.', $slist);
       }
-      
+
       // Add options
       if (!empty($options)) {
         $params += $options;
@@ -900,7 +901,7 @@ class QuickBaseAPI {
         if (is_numeric($fid)) {
           $params["_fid_{$fid}"] = $fvalue;
         }
-        
+
         // Otherwise, we have a field name
         else {
           $params['field'][] = array(
@@ -965,7 +966,7 @@ class QuickBaseAPI {
       if (!empty($slist)) {
         $params['slist'] = implode('.', $slist);
       }
-      
+
       // Add options
       if (!empty($options)) {
         $params += $options;
@@ -1502,8 +1503,42 @@ class QuickBaseAPI {
 
   /**
    * http://www.quickbase.com/api-guide/uploadfile.html
+   * 
+   * @param dbid        Database ID to execute query against
+   * @param rid         The id of the record that will contain the file attachment
+   * @param fid         The field ID of the table field to be used as the key field
+   * @param filename    Filename to store with the data
+   * @param data        Raw file data, binary.  If omitted, the method will attempt to load from filename
+   * 
+   * @return Returns FALSE on error, response object on success
    */
-  public function UploadFile() {}
+  public function UploadFile($dbid, $rid, $fid, $filename, $data = NULL) {
+    $resp = FALSE;
+    if ($this->Authenticate()) {
+      // Try to load data from provided filename if not explicitly provided
+      if (!$data && file_exists($filename)) {
+        $data = file_get_contents($filename);
+      }
+
+      // Make sure we have data before going any further
+      if ($data) {
+        $params = array(
+          'rid' => $rid,
+          'field' => array(array(
+            'data' => base64_encode($data),
+            'attributes' => array(
+              (is_numeric($fid) ? 'fid' : 'name') => $fid,
+              'filename' => basename($filename), // ensure we only have the filename, no path info
+            ),
+          )),
+        );
+
+        // Execute query
+        $resp = $this->sendRequest('API_UploadFile', $params, $dbid);
+      }
+    }
+    return $resp;
+  }
 
   /**
    * http://www.quickbase.com/api-guide/userroles.html
