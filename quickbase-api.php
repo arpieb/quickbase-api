@@ -1,4 +1,15 @@
 <?php
+/*! \mainpage
+ *
+ * This class library is unofficial, unsanctioned, and unsupported by Intuit, and is built based on their public HTTP API service documentation located here:
+ *
+ * http://www.quickbase.com/api-guide/index.html
+ *
+ * The code currently resides on BitBucket here:
+ *
+ * http://git.octobang.com/quickbase-api
+ */
+
 /**
  * @file
  * 

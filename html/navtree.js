@@ -1,6 +1,7 @@
 var NAVTREE =
 [
   [ "Intuit QuickBase API - PHP Class Library", "index.html", [
+    [ "Main Page", "index.html", null ],
     [ "Classes", null, [
       [ "Class List", "annotated.html", "annotated" ],
       [ "Class Index", "classes.html", null ],
