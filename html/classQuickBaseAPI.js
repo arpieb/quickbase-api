@@ -61,9 +61,9 @@ var classQuickBaseAPI =
     [ "$errmsg", "classQuickBaseAPI.html#ab8ec02ce43e46aa9c0c0ca2fd4d2c821", null ],
     [ "$errno", "classQuickBaseAPI.html#a97b36d635601719b5111411629f38ef1", null ],
     [ "$hours", "classQuickBaseAPI.html#a1a338e708931d6debbb19ce1fbaab867", null ],
-    [ "$pwd", "classQuickBaseAPI.html#a4cb7668e74570e36958909e7a6b54f37", null ],
+    [ "$password", "classQuickBaseAPI.html#af3d691f2d8cb3fc7392664a4176576ee", null ],
     [ "$realm", "classQuickBaseAPI.html#a27846943475a567e113c87b0436a1a91", null ],
     [ "$ticket", "classQuickBaseAPI.html#a1a101b253338f016e85800fdd6383935", null ],
-    [ "$user", "classQuickBaseAPI.html#a429b651449c40827df7df137495432ea", null ],
-    [ "$userid", "classQuickBaseAPI.html#a2ab7b1303251a24d082c99069a9622a8", null ]
+    [ "$userid", "classQuickBaseAPI.html#a2ab7b1303251a24d082c99069a9622a8", null ],
+    [ "$username", "classQuickBaseAPI.html#a056c4c23b3bf6b82b0b7e5e5b0ca8ddb", null ]
 ];

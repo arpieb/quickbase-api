@@ -25,8 +25,8 @@
 
 class QuickBaseAPI {
   // Properties passed in via constructor and/or Authenticate method
-  protected $user;
-  protected $pwd;
+  protected $username;
+  protected $password;
   protected $realm;
   protected $hours;
   protected $apptoken;
