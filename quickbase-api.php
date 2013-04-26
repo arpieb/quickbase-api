@@ -265,6 +265,7 @@ class QuickBaseAPI {
         'type' => $type,
       );
       $params += $options;
+
       $resp = $this->sendRequest('API_AddField', $params, $dbid);
     }
     return $resp;
@@ -310,6 +311,7 @@ class QuickBaseAPI {
 
       // Merge passed-in options as-is
       $params += $options;
+
       $resp = $this->sendRequest('API_AddRecord', $params, $dbid);
     }
     return $resp;
@@ -338,6 +340,7 @@ class QuickBaseAPI {
         'pagebody' => $pagebody,
       );
       $params[is_numeric($pageid) ? 'pageid' : 'pagename'] = $pageid;
+
       $resp = $this->sendRequest('API_AddReplaceDBPage', $params, $dbid);
     }
     return $resp;
@@ -360,6 +363,7 @@ class QuickBaseAPI {
         'userid' => $userid,
         'roleid' => $roleid,
       );
+
       $resp = $this->sendRequest('API_AddUserToRole', $params, $dbid);
     }
     return $resp;
@@ -402,6 +406,7 @@ class QuickBaseAPI {
         'password' => $this->password,
         'hours' => $this->hours,
       );
+
       $resp = $this->sendRequest('API_Authenticate', $params, 'main');
       if (FALSE !== $resp && 0 == $resp->errcode) {
         $this->ticket = $resp->ticket;
@@ -431,6 +436,7 @@ class QuickBaseAPI {
         'rid' => $rid,
         'newowner' => $newowner,
       );
+
       $resp = $this->sendRequest('API_ChangeRecordOwner', $params, $dbid);
     }
     return $resp;
@@ -485,6 +491,7 @@ class QuickBaseAPI {
           $params['excludefiles'] = 1;
         }
       }
+
       $resp = $this->sendRequest('API_CloneDatabase', $params, $dbid);
     }
     return $resp;
@@ -492,8 +499,38 @@ class QuickBaseAPI {
 
   /**
    * http://www.quickbase.com/api-guide/API_CopyMasterDetail.htm
+   * 
+   * @param dbid        Database ID to execute query against
+   * @param destrid     The record id of the destination record to which you want the records copied
+   * @param sourcerid   The record id of the source record from which you want to copy detail records
+   * @param copyfid     The field id of a text field used in the name of the new record, if destrid = 0
+   * @param recurse     Set this parameter to true to copy all detail records associated with the master record's detail records recursively
+   * @param relfids     A list of report link field ids that specify the relationships you want to be copied
+   * 
+   * @return Returns FALSE on error, response object on success
    */
-  public function CopyMasterDetail() {}
+  public function CopyMasterDetail($dbid, $destrid, $sourcerid, $copyfid = NULL, $recurse = TRUE, $relfids = array()) {
+    $resp = FALSE;
+    if ($this->Authenticate()) {
+      // Assemble params for call
+      $params = array(
+        'destrid' => $destrid,
+        'sourcerid' => $sourcerid,
+      );
+      if (0 == $destrid && !empty($copyfid)) {
+        $params['copyfid'] = $copyfid;
+      }
+      if ($recurse) {
+        $params['recurse'] = 'true';
+      }
+      if (!empty($relfids)) {
+        $params['relfids'] = implode(',', $relfids);
+      }
+
+      $resp = $this->sendRequest('API_CopyMasterDetail', $params, $dbid);
+    }
+    return $resp;
+  }
 
   /**
    * http://www.quickbase.com/api-guide/create_database.html
@@ -515,6 +552,7 @@ class QuickBaseAPI {
       if ($createapptoken) {
         $params['createapptoken'] = 1;
       }
+
       $resp = $this->sendRequest('API_CreateDatabase', $params, 'main');
     }
     return $resp;
@@ -540,6 +578,7 @@ class QuickBaseAPI {
       if ($pnoun) {
         $params['pnoun'] = $pnoun;
       }
+
       $resp = $this->sendRequest('API_CreateTable', $params, $dbid);
     }
     return $resp;
@@ -561,6 +600,7 @@ class QuickBaseAPI {
       if ($apptoken) {
         $params['apptoken'] = $apptoken;
       }
+
       $resp = $this->sendRequest('API_DeleteDatabase', $params, $dbid);
     }
     return $resp;
@@ -581,6 +621,7 @@ class QuickBaseAPI {
       $params = array(
         'fid' => $fid
       );
+
       $resp = $this->sendRequest('API_DeleteField', $params, $dbid);
     }
     return $resp;
@@ -601,6 +642,7 @@ class QuickBaseAPI {
       $params = array(
         'rid' => $rid
       );
+
       $resp = $this->sendRequest('API_DeleteRecord', $params, $dbid);
     }
     return $resp;
@@ -621,15 +663,15 @@ class QuickBaseAPI {
    * @param slist     Can be one of the following:
    *                  Array of field IDs to sort on
    *                  NULL or empty array to use default sort fields
-   * @param fmt       Set this parameter to "structured" to specify that the query should return structured data
    * @param options   Array of optional query options, name-value pairs:
    *                  returnpercentage    Specifies whether Numeric - Percent values in the returned data will be percentage format (10% is shown as 10) or decimal format (10% is shown as .1)
    *                  options             Specifies return options for the query (see API call page)
    *                  includeRids         Specifies that the record IDs of each record should be returned
+   * @param fmt       Set this parameter to "structured" to specify that the query should return structured data
    * 
    * @return Returns FALSE on error, response object on success
    */
-  public function DoQuery($dbid, $query, $clist = array(), $slist = array(), $fmt = 'structured', $options = array()) {
+  public function DoQuery($dbid, $query = NULL, $clist = array(), $slist = array(), $options = array(), $fmt = 'structured') {
     $resp = FALSE;
     if ($this->Authenticate()) {
       $params = array(
@@ -645,24 +687,22 @@ class QuickBaseAPI {
         // Handle array of queries
         $params['query'] = $query;
       }
-      else {
+      elseif (!empty($query)) {
         // Assume anything else is a query name
         $params['qname'] = $query;
       }
 
       // Build return and sort lists
       if (!empty($clist)) {
-        $param['clist'] = implode('.', $clist);
+        $params['clist'] = implode('.', $clist);
       }
       if (!empty($slist)) {
-        $param['slist'] = implode('.', $slist);
+        $params['slist'] = implode('.', $slist);
       }
       
       // Add options
       if (!empty($options)) {
-        foreach ($options as $opt_name => $opt_value) {
-          $param[$opt_name] = $opt_value;
-        }
+        $params += $options;
       }
 
       // Execute query
@@ -682,7 +722,7 @@ class QuickBaseAPI {
    * 
    * @return Returns FALSE on error, response object on success
    */
-  public function DoQueryCount($dbid, $query) {
+  public function DoQueryCount($dbid, $query = NULL) {
     $resp = FALSE;
     if ($this->Authenticate()) {
       $params = array();
@@ -696,7 +736,7 @@ class QuickBaseAPI {
         // Handle array of queries
         $params['query'] = $query;
       }
-      else {
+      elseif (!empty($query)) {
         // Assume anything else is a query name
         $params['qname'] = $query;
       }
@@ -709,33 +749,233 @@ class QuickBaseAPI {
 
   /**
    * http://www.quickbase.com/api-guide/edit_record.html
+   * 
+   * @param dbid      Database ID to execute query against
+   * @param rid       The record ID of the record to be edited. You can obtain the recordID of any record in a query
+   * @param record    Array of field values in the format:
+   *                  array(
+   *                    <fid|name> => <value|array('data' => DATA[, 'attributes' => array(NAME => VAL)])>
+   *                  );
+   * @param update_id You can obtain the update ID for a record using the API_GetRecordInfo for the record you are editing
+   * @param options   Array of name-value pairs that can override the values set during construction
+   *                  disprec       Set this parameter to 1 to specify that the new record should be displayed within the QuickBase application
+   *                  fform         Set this parameter to 1 if you are invoking API_AddRecord from within an HTML form that has checkboxes and want those checkboxes to set QuickBase checkbox fields
+   *                  ignoreError   Set this parameter to 1 to specify that no error should be returned when a built-in field (for example, Record ID#) is written-to in an API_AddRecord call
+   *                  msInUTC       Allows you to specify that QuickBase should interpret all date/time stamps passed in as milliseconds using Coordinated Universal Time (UTC) rather than using the local application time
+   * 
+   * @return Returns FALSE on error, response object on success
    */
-  public function EditRecord() {}
+  public function EditRecord($dbid, $rid, $record, $update_id = NULL, $options = array()) {
+    $resp = FALSE;
+    if ($this->Authenticate()) {
+      // Assemble params for call
+      $params = array(
+        'rid' => $rid,
+      );
+
+      // Assemble field elements
+      foreach ($record as $fid => $value) {
+        $tmp_field = array();
+        // Set value up in data key
+        if (is_array($value)) {
+          $tmp_field = $value;
+        }
+        else {
+          $tmp_field['data'] = $value;
+        }
+
+        // Set fid or name up in correct attribute
+        $tmp_field['attributes'][is_numeric($fid) ? 'fid' : 'name'] = $fid;
+
+        // Add to params array
+        $params['field'][] = $tmp_field;
+      }
+
+      // Add update ID if provided
+      if (!empty($update_id)) {
+        $params['update_id'] = $update_id;
+      }
+
+      // Merge passed-in options as-is
+      $params += $options;
+
+      $resp = $this->sendRequest('API_EditRecord', $params, $dbid);
+    }
+    return $resp;
+  }
 
   /**
    * http://www.quickbase.com/api-guide/field_add_choices.html
+   * 
+   * @param dbid      Database ID to execute query against
+   * @param fid       The field ID of the multiple choice field to which you want to add choices
+   * @param choices   List of choices to add to multiple-choice text field
+   * 
+   * @return Returns FALSE on error, response object on success
    */
-  public function FieldAddChoices() {}
+  public function FieldAddChoices($dbid, $fid, $choices) {
+    $resp = FALSE;
+    if ($this->Authenticate()) {
+      // Assemble params for call
+      $params = array(
+        'fid' => $fid,
+      );
+
+      // Add choice elements
+      $params['choice'] = $choices;
+
+      $resp = $this->sendRequest('API_FieldAddChoices', $params, $dbid);
+    }
+    return $resp;
+  }
 
   /**
    * http://www.quickbase.com/api-guide/field_remove_choices.html
+   * 
+   * @param dbid      Database ID to execute query against
+   * @param fid       The field ID of the multiple choice field to which you want to remove choices
+   * @param choices   List of choices to remove from multiple-choice text field
+   * 
+   * @return Returns FALSE on error, response object on success
    */
-  public function FieldRemoveChoices() {}
+  public function FieldRemoveChoices($dbid, $fid, $choices) {
+    $resp = FALSE;
+    if ($this->Authenticate()) {
+      // Assemble params for call
+      $params = array(
+        'fid' => $fid,
+      );
+
+      // Add choice elements
+      $params['choice'] = $choices;
+
+      $resp = $this->sendRequest('API_FieldRemoveChoices', $params, $dbid);
+    }
+    return $resp;
+  }
 
   /**
    * http://www.quickbase.com/api-guide/find_db_by_name.html
+   * 
+   * @param dbname        The name of the application you want to find
+   * @param parentsOnly   Ensures an app ID is returned, regardless of whether the application contains a single table or not
+   * 
+   * @return Returns FALSE on error, response object on success
    */
-  public function FindDBByName() {}
+  public function FindDBByName($dbname, $parentsOnly = TRUE) {
+    $resp = FALSE;
+    if ($this->Authenticate()) {
+      // Assemble params for call
+      $params = array(
+        'dbname' => $dbname,
+      );
+
+      if ($parentsOnly) {
+        $params['ParentsOnly'] = 1;
+      }
+
+      $resp = $this->sendRequest('API_FindDBByName', $params, 'main');
+    }
+    return $resp;
+  }
 
   /**
    * http://www.quickbase.com/api-guide/gen_add_record_form.html
+   * 
+   * @param dbid      Database ID to execute query against
+   * @param fields    Array of field values in the format:
+   *                  array(
+   *                    <fid|name> => <value>
+   *                  );
+   * 
+   * @return Returns FALSE on error, response object on success
    */
-  public function GenAddRecordForm() {}
+  public function GenAddRecordForm($dbid, $fields = array()) {
+    $resp = FALSE;
+    if ($this->Authenticate()) {
+      // Assemble params for call
+      $params = array();
+      foreach ($fields as $fid => $fvalue) {
+        // If we have a numeric field ID
+        if (is_numeric($fid)) {
+          $params["_fid_{$fid}"] = $fvalue;
+        }
+        
+        // Otherwise, we have a field name
+        else {
+          $params['field'][] = array(
+            'data' => $fvalue,
+            'attributes' => array(
+              'name' => $fid,
+            ),
+          );
+        }
+      }
+
+      $resp = $this->sendRequest('API_GenAddRecordForm', $params, $dbid, FALSE);
+    }
+    return $resp;
+  }
 
   /**
    * http://www.quickbase.com/api-guide/gen_results_table.html
+   * 
+   * @param dbid      Database ID to execute query against
+   * @param query     Can be one of the following:
+   *                  Array of one or more queries (e.g. {'5'.CT.'Ragnar Lodbrok'})
+   *                  Query ID (numeric)
+   *                  Query name (alphanumeric)
+   * @param clist     Can be one of the following:
+   *                  Array of field IDs to be returned
+   *                  'a' for all fields
+   *                  NULL or empty array to return default fields
+   * @param slist     Can be one of the following:
+   *                  Array of field IDs to sort on
+   *                  NULL or empty array to use default sort fields
+   * @param options   Array of optional query options, name-value pairs:
+   *                  returnpercentage    Specifies whether Numeric - Percent values in the returned data will be percentage format (10% is shown as 10) or decimal format (10% is shown as .1)
+   *                  options             Specifies return options for the query (see API call page)
+   *                  includeRids         Specifies that the record IDs of each record should be returned
+   * 
+   * @return Returns FALSE on error, response object on success
    */
-  public function GenResultsTable() {}
+  public function GenResultsTable($dbid, $query = NULL, $clist = array(), $slist = array(), $options = array()) {
+    $resp = FALSE;
+    if ($this->Authenticate()) {
+      $params = array();
+
+      // Build out query portion
+      if (is_numeric($query)) {
+        // Handle query ID
+        $params['qid'] = $query;
+      }
+      elseif (is_array($query)) {
+        // Handle array of queries
+        $params['query'] = $query;
+      }
+      elseif (!empty($query)) {
+        // Assume anything else is a query name
+        $params['qname'] = $query;
+      }
+
+      // Build return and sort lists
+      if (!empty($clist)) {
+        $params['clist'] = implode('.', $clist);
+      }
+      if (!empty($slist)) {
+        $params['slist'] = implode('.', $slist);
+      }
+      
+      // Add options
+      if (!empty($options)) {
+        $params += $options;
+      }
+
+      // Execute query
+      $resp = $this->sendRequest('API_GenResultsTable', $params, $dbid, FALSE);
+    }
+    return $resp;
+  }
 
   /**
    * http://www.quickbase.com/api-guide/getancestorinfo.html
@@ -747,7 +987,6 @@ class QuickBaseAPI {
   public function GetAncestorInfo($dbid) {
     $resp = FALSE;
     if ($this->Authenticate()) {
-      // Assemble params for call
       $resp = $this->sendRequest('API_GetAncestorInfo', NULL, $dbid);
     }
     return $resp;
@@ -767,6 +1006,7 @@ class QuickBaseAPI {
       $params = array(
         'dbid' => $dbid,
       );
+
       $resp = $this->sendRequest('API_GetAppDTMInfo', $params, 'main');
     }
     return $resp;
@@ -782,7 +1022,6 @@ class QuickBaseAPI {
   public function GetDBInfo($dbid) {
     $resp = FALSE;
     if ($this->Authenticate()) {
-      // Assemble params for call
       $resp = $this->sendRequest('API_GetDBInfo', NULL, $dbid);
     }
     return $resp;
@@ -803,6 +1042,7 @@ class QuickBaseAPI {
       $params = array(
         'pageID' => $pageID,
       );
+
       $resp = $this->sendRequest('API_GetDBPage', $params, $dbid);
     }
     return $resp;
@@ -825,6 +1065,7 @@ class QuickBaseAPI {
       );
       $resp = $this->sendRequest('API_GetDBvar', $params, $dbid);
     }
+
     return $resp;
   }
 
@@ -838,7 +1079,6 @@ class QuickBaseAPI {
   public function GetNumRecords($dbid) {
     $resp = FALSE;
     if ($this->Authenticate()) {
-      // Assemble params for call
       $resp = $this->sendRequest('API_GetNumRecords', NULL, $dbid);
     }
     return $resp;
@@ -863,6 +1103,7 @@ class QuickBaseAPI {
         'rid' => $rid,
       );
       $params += $options;
+
       $resp = $this->sendRequest('API_GetRecordAsHTML', $params, $dbid, FALSE);
     }
     return $resp;
@@ -883,6 +1124,7 @@ class QuickBaseAPI {
       $params = array(
         'rid' => $rid,
       );
+
       $resp = $this->sendRequest('API_GetRecordInfo', $params, $dbid);
     }
     return $resp;
@@ -898,7 +1140,6 @@ class QuickBaseAPI {
   public function GetRoleInfo($dbid) {
     $resp = FALSE;
     if ($this->Authenticate()) {
-      // Assemble params for call
       $resp = $this->sendRequest('API_GetRoleInfo', NULL, $dbid);
     }
     return $resp;
@@ -914,7 +1155,6 @@ class QuickBaseAPI {
   public function GetSchema($dbid) {
     $resp = FALSE;
     if ($this->Authenticate()) {
-      // Assemble params for call
       $resp = $this->sendRequest('API_GetSchema', NULL, $dbid);
     }
     return $resp;
@@ -934,6 +1174,7 @@ class QuickBaseAPI {
       $params = array(
         'email' => $email,
       );
+
       $resp = $this->sendRequest('API_GetUserInfo', NULL, 'main');
     }
     return $resp;
@@ -958,6 +1199,7 @@ class QuickBaseAPI {
       if ($inclgrps) {
         $params['inclgrps'] = 1;
       }
+
       $resp = $this->sendRequest('API_GetUserRole', $params, $dbid);
     }
     return $resp;
@@ -977,7 +1219,6 @@ class QuickBaseAPI {
   public function GrantedDBs($params = array()) {
     $resp = FALSE;
     if ($this->Authenticate()) {
-      // Assemble params for call
       $resp = $this->sendRequest('API_GrantedDBs', $params, 'main');
     }
     return $resp;
@@ -985,58 +1226,279 @@ class QuickBaseAPI {
 
   /**
    * http://www.quickbase.com/api-guide/importfromcsv.html
+   * 
+   * @param dbid          Database ID to execute query against
+   * @param records_csv   An aggregate containing the actual records you are importing
+   * @param clist         Use this parameter only if you are updating existing record. Do not use this parameter  if you are adding new records!
+   *                      A period-delimited list of field IDs to which the CSV columns map.  (See docs for more details.)
+   * @param options       Other options, name-value pairs:
+   *                      clist_output  Specifies which fields should be returned in addition to the record ID and updated ID
+   *                      skipfirst     Set this parameter to 1 to prevent QuickBase from importing the first row of data in a CSV file
+   *                      msInUTC       Allows you to specify that QuickBase should interpret all date/time stamps passed in as milliseconds using Coordinated Universal Time (UTC) rather than using the local application time
+   * 
+   * @return Returns FALSE on error, response object on success
    */
-  public function ImportFromCSV() {}
+  public function ImportFromCSV($dbid, $records_csv, $clist = array(), $options = array()) {
+    $resp = FALSE;
+    if ($this->Authenticate()) {
+      // Assemble params for call
+      $params = array(
+        'records_csv' => $records_csv,
+      );
+      if (!empty($clist)) {
+        $params['clist'] = implode('.', $clist);
+      }
+      if (!empty($options['clist_output'])) {
+        $params['clist_output'] = implode('.', $options['clist_output']);
+      }
+      if (!empty($options['skipfirst'])) {
+        $params['skipfirst'] = 1;
+      }
+      if (!empty($options['msInUTC'])) {
+        $params['msInUTC'] = 1;
+      }
+
+      $resp = $this->sendRequest('API_ImportFromCSV', $params, $dbid);
+    }
+    return $resp;
+  }
 
   /**
    * http://www.quickbase.com/api-guide/provisionuser.html
+   * 
+   * @param dbid      Database ID to execute query against
+   * @param email     The email address of the person to whom you are granting access
+   * @param fname     The first name of the new QuickBase user
+   * @param lname     The last name of the new QuickBase user
+   * @param roleid    The role ID of the role you want to assign this user to
+   * 
+   * @return Returns FALSE on error, response object on success
    */
-  public function ProvisionUser() {}
+  public function ProvisionUser($dbid, $email, $fname, $lname, $roleid = NULL) {
+    $resp = FALSE;
+    if ($this->Authenticate()) {
+      // Assemble params for call
+      $params = array(
+        'email' => $email,
+        'fname' => $fname,
+        'lname' => $lname,
+      );
+      if ($roleid) {
+        $params['roleid'] = $roleid;
+      }
+
+      $resp = $this->sendRequest('API_ProvisionUser', $params, $dbid);
+    }
+    return $resp;
+  }
 
   /**
    * http://www.quickbase.com/api-guide/purgerecords.html
+   * 
+   * @param dbid      Database ID to execute query against
+   * @param query     Can be one of the following:
+   *                  Array of one or more queries (e.g. {'5'.CT.'Ragnar Lodbrok'})
+   *                  Query ID (numeric)
+   *                  Query name (alphanumeric)
+   * 
+   * @return Returns FALSE on error, response object on success
    */
-  public function PurgeRecords() {}
+  public function PurgeRecords($dbid, $query = NULL) {
+    $resp = FALSE;
+    if ($this->Authenticate()) {
+      $params = array();
+
+      // Build out query portion
+      if (is_numeric($query)) {
+        // Handle query ID
+        $params['qid'] = $query;
+      }
+      elseif (is_array($query)) {
+        // Handle array of queries
+        $params['query'] = $query;
+      }
+      elseif (!empty($query)) {
+        // Assume anything else is a query name
+        $params['qname'] = $query;
+      }
+
+      // Execute query
+      $resp = $this->sendRequest('API_PurgeRecords', $params, $dbid);
+    }
+    return $resp;
+  }
 
   /**
    * http://www.quickbase.com/api-guide/removeuserfromrole.html
+   * 
+   * @param dbid      Database ID to execute query against
+   * @param userid    The ID of user you want removed from the role
+   * @param roleid    The ID of the role from which you want the user removed
+   * 
+   * @return Returns FALSE on error, response object on success
    */
-  public function RemoveUserFromRole() {}
+  public function RemoveUserFromRole($dbid, $userid, $roleid) {
+    $resp = FALSE;
+    if ($this->Authenticate()) {
+      $params = array(
+        'userid' => $userid,
+        'roleid' => $roleid,
+      );
+
+      // Execute query
+      $resp = $this->sendRequest('API_RemoveUserFromRole', $params, $dbid);
+    }
+    return $resp;
+  }
 
   /**
    * http://www.quickbase.com/api-guide/renameapp.html
+   * 
+   * @param dbid        Database ID to execute query against
+   * @param newappname  The name you want to assign to the application
+   * 
+   * @return Returns FALSE on error, response object on success
    */
-  public function RenameApp() {}
+  public function RenameApp($dbid, $newappname) {
+    $resp = FALSE;
+    if ($this->Authenticate()) {
+      $params = array(
+        'newappname' => $newappname,
+      );
+
+      // Execute query
+      $resp = $this->sendRequest('API_RenameApp', $params, $dbid);
+    }
+    return $resp;
+  }
 
   /**
    * http://www.quickbase.com/api-guide/runimport.html
+   * 
+   * @param dbid  Database ID to execute query against
+   * @param id    The ID of the saved import that you want to execute
+   * 
+   * @return Returns FALSE on error, response object on success
    */
-  public function RunImport() {}
+  public function RunImport($dbid, $id) {
+    $resp = FALSE;
+    if ($this->Authenticate()) {
+      $params = array(
+        'id' => $id,
+      );
+
+      // Execute query
+      $resp = $this->sendRequest('API_RunImport', $params, $dbid);
+    }
+    return $resp;
+  }
 
   /**
    * http://www.quickbase.com/api-guide/sendinvitation.html
+   * 
+   * @param dbid      Database ID to execute query against
+   * @param userid    The ID of the QuickBase user you are inviting to your application
+   * @param usertext  The message you want to display in your email invitation
+   * 
+   * @return Returns FALSE on error, response object on success
    */
-  public function SendInvitation() {}
+  public function SendInvitation($dbid, $userid, $usertext = NULL) {
+    $resp = FALSE;
+    if ($this->Authenticate()) {
+      $params = array(
+        'userid' => $userid,
+      );
+      if (!empty($usertext)) {
+        $params['usertext'] = $usertext;
+      }
+
+      // Execute query
+      $resp = $this->sendRequest('API_SendInvitation', $params, $dbid);
+    }
+    return $resp;
+  }
 
   /**
    * http://www.quickbase.com/api-guide/setdbvar.html
+   * 
+   * @param dbid      Database ID to execute query against
+   * @param varname   The name you want the DBVar to have
+   * @param value     The value you want to set in the DBVar
+   * 
+   * @return Returns FALSE on error, response object on success
    */
-  public function SetDBvar() {}
+  public function SetDBvar($dbid, $varname, $value) {
+    $resp = FALSE;
+    if ($this->Authenticate()) {
+      $params = array(
+        'varname' => $varname,
+        'value' => $value,
+      );
+
+      // Execute query
+      $resp = $this->sendRequest('API_SetDBvar', $params, $dbid);
+    }
+    return $resp;
+  }
 
   /**
    * http://www.quickbase.com/api-guide/setfieldproperties.html
+   * 
+   * @param dbid        Database ID to execute query against
+   * @param fid         Field ID of the field to be changed
+   * @param properties  Name/value pairs for the properties to be set.  See docs for properties.
+   * 
+   * @return Returns FALSE on error, response object on success
    */
-  public function SetFieldProperties() {}
+  public function SetFieldProperties($dbid, $fid, $properties = array()) {
+    $resp = FALSE;
+    if ($this->Authenticate()) {
+      $params = array(
+        'fid' => $fid,
+      );
+
+      // Add properties
+      $params += $properties;
+
+      // Execute query
+      $resp = $this->sendRequest('API_SetFieldProperties', $params, $dbid);
+    }
+    return $resp;
+  }
 
   /**
    * http://www.quickbase.com/api-guide/setkeyfield.html
+   * 
+   * @param dbid        Database ID to execute query against
+   * @param fid         The field ID of the table field to be used as the key field
+   * 
+   * @return Returns FALSE on error, response object on success
    */
-  public function SetKeyField() {}
+  public function SetKeyField($dbid, $fid) {
+    $resp = FALSE;
+    if ($this->Authenticate()) {
+      $params = array(
+        'fid' => $fid,
+      );
+
+      // Execute query
+      $resp = $this->sendRequest('API_SetKeyField', $params, $dbid);
+    }
+    return $resp;
+  }
 
   /**
    * http://www.quickbase.com/api-guide/signout.html
+   * 
+   * @return Returns FALSE on error, response object on success
    */
-  public function SignOut() {}
+  public function SignOut() {
+    $resp = FALSE;
+    if ($this->Authenticate()) {
+      $resp = $this->sendRequest('API_SignOut', NULL, 'main');
+    }
+    return $resp;
+  }
 
   /**
    * http://www.quickbase.com/api-guide/uploadfile.html
@@ -1045,6 +1507,16 @@ class QuickBaseAPI {
 
   /**
    * http://www.quickbase.com/api-guide/userroles.html
+   * 
+   * @param dbid        Database ID to execute query against
+   * 
+   * @return Returns FALSE on error, response object on success
    */
-  public function UserRoles() {}
+  public function UserRoles($dbid) {
+    $resp = FALSE;
+    if ($this->Authenticate()) {
+      $resp = $this->sendRequest('API_UserRoles', NULL, $dbid);
+    }
+    return $resp;
+  }
 };
