@@ -96,8 +96,8 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
-<a href="#pub-attribs">Public Attributes</a> &#124;
-<a href="#pro-methods">Protected Member Functions</a>  </div>
+<a href="#pro-methods">Protected Member Functions</a> &#124;
+<a href="#pro-attribs">Protected Attributes</a>  </div>
   <div class="headertitle">
 <div class="title">QuickBaseAPI Class Reference</div>  </div>
 </div><!--header-->
@@ -108,6 +108,8 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <tr><td colspan="2"><h2><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQuickBaseAPI.html#a7cab4ff7b9c013a0d656c3b19945fae5">__construct</a> ($params)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQuickBaseAPI.html#a621de9b40b3f3898616254bf1554f60c">GetErrNo</a> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQuickBaseAPI.html#ab5e27b9ed7bc7305080767ea1fab872c">GetErrMsg</a> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQuickBaseAPI.html#a86110e157542198a94eb0dc0cc37925c">Debug</a> ($debug=TRUE)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQuickBaseAPI.html#a430693a5093fcb88a6e63064d3177603">AddField</a> ($dbid, $label, $type, $options=array())</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQuickBaseAPI.html#a12b5d49c3fbe17cc1d165f053f4a9adb">AddRecord</a> ($dbid, $record, $options=array())</td></tr>
@@ -157,8 +159,13 @@ Public Member Functions</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQuickBaseAPI.html#a6fe1fd8a9bf9963b093a748542653637">SignOut</a> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQuickBaseAPI.html#a0db7fe6b077b2e59be89666f9df88b56">UploadFile</a> ($dbid, $rid, $fid, $filename, $data=NULL)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQuickBaseAPI.html#aa1d1f61974c54733b46a3c1d727a84c4">UserRoles</a> ($dbid)</td></tr>
-<tr><td colspan="2"><h2><a name="pub-attribs"></a>
-Public Attributes</h2></td></tr>
+<tr><td colspan="2"><h2><a name="pro-methods"></a>
+Protected Member Functions</h2></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQuickBaseAPI.html#ae43564682995260ab9f91a3bcaa54033">sendRequest</a> ($fn, $params=NULL, $dbid=NULL, $parse_resp=TRUE)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQuickBaseAPI.html#a243e1438de55651a1483bd3100f7ee6b">setError</a> ($comp, $msg, $code=NULL, $url=NULL)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQuickBaseAPI.html#abbbf29da5113ef6b1f76433cb52791cd">debugOut</a> ($label, $data)</td></tr>
+<tr><td colspan="2"><h2><a name="pro-attribs"></a>
+Protected Attributes</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a429b651449c40827df7df137495432ea"></a><!-- doxytag: member="QuickBaseAPI::$user" ref="a429b651449c40827df7df137495432ea" args="" -->
 &#160;</td><td class="memItemRight" valign="bottom"><b>$user</b></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4cb7668e74570e36958909e7a6b54f37"></a><!-- doxytag: member="QuickBaseAPI::$pwd" ref="a4cb7668e74570e36958909e7a6b54f37" args="" -->
@@ -179,11 +186,6 @@ Public Attributes</h2></td></tr>
 &#160;</td><td class="memItemRight" valign="bottom"><b>$errmsg</b> = ''</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="afc04da6cd55212c79fc1b4c9205bb217"></a><!-- doxytag: member="QuickBaseAPI::$debug" ref="afc04da6cd55212c79fc1b4c9205bb217" args="" -->
 &#160;</td><td class="memItemRight" valign="bottom"><b>$debug</b> = FALSE</td></tr>
-<tr><td colspan="2"><h2><a name="pro-methods"></a>
-Protected Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQuickBaseAPI.html#ae43564682995260ab9f91a3bcaa54033">sendRequest</a> ($fn, $params=NULL, $dbid=NULL, $parse_resp=TRUE)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQuickBaseAPI.html#a243e1438de55651a1483bd3100f7ee6b">setError</a> ($comp, $msg, $code=NULL, $url=NULL)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQuickBaseAPI.html#abbbf29da5113ef6b1f76433cb52791cd">debugOut</a> ($label, $data)</td></tr>
 </table>
 <hr/><h2>Constructor &amp; Destructor Documentation</h2>
 <a class="anchor" id="a7cab4ff7b9c013a0d656c3b19945fae5"></a><!-- doxytag: member="QuickBaseAPI::__construct" ref="a7cab4ff7b9c013a0d656c3b19945fae5" args="($params)" -->
@@ -1410,6 +1412,42 @@ Protected Member Functions</h2></td></tr>
 
 </div>
 </div>
+<a class="anchor" id="ab5e27b9ed7bc7305080767ea1fab872c"></a><!-- doxytag: member="QuickBaseAPI::GetErrMsg" ref="ab5e27b9ed7bc7305080767ea1fab872c" args="()" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classQuickBaseAPI.html#ab5e27b9ed7bc7305080767ea1fab872c">QuickBaseAPI::GetErrMsg</a> </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+<p>Accessor method to retrieve the last error message for this object</p>
+<dl class="return"><dt><b>Returns:</b></dt><dd>Returns the last error message for this object </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a621de9b40b3f3898616254bf1554f60c"></a><!-- doxytag: member="QuickBaseAPI::GetErrNo" ref="a621de9b40b3f3898616254bf1554f60c" args="()" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classQuickBaseAPI.html#a621de9b40b3f3898616254bf1554f60c">QuickBaseAPI::GetErrNo</a> </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+<p>Accessor method to retrieve the last error code for this object</p>
+<dl class="return"><dt><b>Returns:</b></dt><dd>Returns the last error code for this object </dd></dl>
+
+</div>
+</div>
 <a class="anchor" id="a5e28f6298457e25fda03d801502c0291"></a><!-- doxytag: member="QuickBaseAPI::GetNumRecords" ref="a5e28f6298457e25fda03d801502c0291" args="($dbid)" -->
 <div class="memitem">
 <div class="memproto">
@@ -2302,7 +2340,7 @@ Protected Member Functions</h2></td></tr>
     <ul>
       <li class="navelem"><a class="el" href="classQuickBaseAPI.html">QuickBaseAPI</a>      </li>
 
-    <li class="footer">Generated on Fri Apr 26 2013 00:18:13 for Intuit QuickBase API - PHP Class Library by
+    <li class="footer">Generated on Fri Apr 26 2013 02:29:56 for Intuit QuickBase API - PHP Class Library by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.6.1 </li>
    </ul>

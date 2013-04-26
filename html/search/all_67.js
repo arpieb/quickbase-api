@@ -7,6 +7,8 @@ var searchData=
   ['getdbinfo',['GetDBInfo',['../classQuickBaseAPI.html#ac2290013f03f18ce98b83a81108be976',1,'QuickBaseAPI']]],
   ['getdbpage',['GetDBPage',['../classQuickBaseAPI.html#a11099b08829dc896013522dbb546f449',1,'QuickBaseAPI']]],
   ['getdbvar',['GetDBvar',['../classQuickBaseAPI.html#a3992ee0a26662ba150aabb892f0aa906',1,'QuickBaseAPI']]],
+  ['geterrmsg',['GetErrMsg',['../classQuickBaseAPI.html#ab5e27b9ed7bc7305080767ea1fab872c',1,'QuickBaseAPI']]],
+  ['geterrno',['GetErrNo',['../classQuickBaseAPI.html#a621de9b40b3f3898616254bf1554f60c',1,'QuickBaseAPI']]],
   ['getnumrecords',['GetNumRecords',['../classQuickBaseAPI.html#a5e28f6298457e25fda03d801502c0291',1,'QuickBaseAPI']]],
   ['getrecordashtml',['GetRecordAsHTML',['../classQuickBaseAPI.html#a27827751a57b7fb6dcfd2337d7d8e10c',1,'QuickBaseAPI']]],
   ['getrecordinfo',['GetRecordInfo',['../classQuickBaseAPI.html#ac9440da1012148936de8de09f12e4b71',1,'QuickBaseAPI']]],

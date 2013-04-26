@@ -14,22 +14,22 @@
 
 class QuickBaseAPI {
   // Properties passed in via constructor and/or Authenticate method
-  var $user;
-  var $pwd;
-  var $realm;
-  var $hours;
-  var $apptoken;
+  protected $user;
+  protected $pwd;
+  protected $realm;
+  protected $hours;
+  protected $apptoken;
 
   // Properties set on successful call to Authenticate method
-  var $ticket = NULL;
-  var $userid = NULL;
+  protected $ticket = NULL;
+  protected $userid = NULL;
 
   // Properties set when an error occurs at the XML, cURL or API level
-  var $errno = 0;
-  var $errmsg = '';
+  protected $errno = 0;
+  protected $errmsg = '';
 
   // Internal debugging properties
-  var $debug = FALSE;
+  protected $debug = FALSE;
 
   //////////////////////////////////////////////////////////////////////
   // Construct/destruct methods
@@ -235,6 +235,24 @@ class QuickBaseAPI {
   //////////////////////////////////////////////////////////////////////
   // Public API
   //////////////////////////////////////////////////////////////////////
+  /**
+   * Accessor method to retrieve the last error code for this object
+   *
+   * @return Returns the last error code for this object
+   */
+  public function GetErrNo() {
+    return $this->errno;
+  }
+
+  /**
+   * Accessor method to retrieve the last error message for this object
+   *
+   * @return Returns the last error message for this object
+   */
+  public function GetErrMsg() {
+    return $this->errmsg;
+  }
+
   /**
    * Enables debugging output; off by default
    * 

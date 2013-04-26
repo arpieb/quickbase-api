@@ -31,6 +31,8 @@ var classQuickBaseAPI =
     [ "GetDBInfo", "classQuickBaseAPI.html#ac2290013f03f18ce98b83a81108be976", null ],
     [ "GetDBPage", "classQuickBaseAPI.html#a11099b08829dc896013522dbb546f449", null ],
     [ "GetDBvar", "classQuickBaseAPI.html#a3992ee0a26662ba150aabb892f0aa906", null ],
+    [ "GetErrMsg", "classQuickBaseAPI.html#ab5e27b9ed7bc7305080767ea1fab872c", null ],
+    [ "GetErrNo", "classQuickBaseAPI.html#a621de9b40b3f3898616254bf1554f60c", null ],
     [ "GetNumRecords", "classQuickBaseAPI.html#a5e28f6298457e25fda03d801502c0291", null ],
     [ "GetRecordAsHTML", "classQuickBaseAPI.html#a27827751a57b7fb6dcfd2337d7d8e10c", null ],
     [ "GetRecordInfo", "classQuickBaseAPI.html#ac9440da1012148936de8de09f12e4b71", null ],
