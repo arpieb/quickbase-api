@@ -697,6 +697,7 @@ class QuickBaseAPI {
    *                  returnpercentage    Specifies whether Numeric - Percent values in the returned data will be percentage format (10% is shown as 10) or decimal format (10% is shown as .1)
    *                  options             Specifies return options for the query (see API call page)
    *                  includeRids         Specifies that the record IDs of each record should be returned
+   *                  op                  Operation to use for multiple query strings - [AND | OR] defaults to AND
    * @param fmt       Set this parameter to "structured" to specify that the query should return structured data
    * 
    * @return Returns FALSE on error, response object on success
@@ -715,7 +716,8 @@ class QuickBaseAPI {
       }
       elseif (is_array($query)) {
         // Handle array of queries
-        $params['query'] = $query;
+        $op = (!empty($options['op'])) ? $options['op'] : 'AND';
+        $params['query'] = implode($op, $query);
       }
       elseif (!empty($query)) {
         // Assume anything else is a query name
