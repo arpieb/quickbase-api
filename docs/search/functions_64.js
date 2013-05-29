@@ -6,5 +6,5 @@ var searchData=
   ['deletefield',['DeleteField',['../classQuickBaseAPI.html#ae5fe1c391da64c92883768e76d0c5323',1,'QuickBaseAPI']]],
   ['deleterecord',['DeleteRecord',['../classQuickBaseAPI.html#a024411c9f4dbf2f37a44958e1a8b5dde',1,'QuickBaseAPI']]],
   ['doquery',['DoQuery',['../classQuickBaseAPI.html#a7d39b1ca6967fcecc8dbd279a67b3568',1,'QuickBaseAPI']]],
-  ['doquerycount',['DoQueryCount',['../classQuickBaseAPI.html#aafde492dc175b1423f6d4fd75b444784',1,'QuickBaseAPI']]]
+  ['doquerycount',['DoQueryCount',['../classQuickBaseAPI.html#a10533f2e11ffa4f0d17adcb795c0f4b1',1,'QuickBaseAPI']]]
 ];

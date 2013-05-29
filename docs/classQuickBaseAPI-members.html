@@ -128,7 +128,7 @@ This is the complete list of members for <a class="el" href="classQuickBaseAPI.h
   <tr class="memlist"><td><a class="el" href="classQuickBaseAPI.html#ae5fe1c391da64c92883768e76d0c5323">DeleteField</a>($dbid, $fid)</td><td><a class="el" href="classQuickBaseAPI.html">QuickBaseAPI</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="classQuickBaseAPI.html#a024411c9f4dbf2f37a44958e1a8b5dde">DeleteRecord</a>($dbid, $rid)</td><td><a class="el" href="classQuickBaseAPI.html">QuickBaseAPI</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="classQuickBaseAPI.html#a7d39b1ca6967fcecc8dbd279a67b3568">DoQuery</a>($dbid, $query=NULL, $clist=array(), $slist=array(), $options=array(), $fmt= 'structured')</td><td><a class="el" href="classQuickBaseAPI.html">QuickBaseAPI</a></td><td></td></tr>
-  <tr class="memlist"><td><a class="el" href="classQuickBaseAPI.html#aafde492dc175b1423f6d4fd75b444784">DoQueryCount</a>($dbid, $query=NULL)</td><td><a class="el" href="classQuickBaseAPI.html">QuickBaseAPI</a></td><td></td></tr>
+  <tr class="memlist"><td><a class="el" href="classQuickBaseAPI.html#a10533f2e11ffa4f0d17adcb795c0f4b1">DoQueryCount</a>($dbid, $query=NULL, $op= 'AND')</td><td><a class="el" href="classQuickBaseAPI.html">QuickBaseAPI</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="classQuickBaseAPI.html#ad416c184d8381b4f0b113818e1ec0e38">EditRecord</a>($dbid, $rid, $record, $update_id=NULL, $options=array())</td><td><a class="el" href="classQuickBaseAPI.html">QuickBaseAPI</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="classQuickBaseAPI.html#a00d6b47f5f1e6260751c7655009b7f7c">FieldAddChoices</a>($dbid, $fid, $choices)</td><td><a class="el" href="classQuickBaseAPI.html">QuickBaseAPI</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="classQuickBaseAPI.html#aa3e86cc9d331171d6f369f8227ed2fe0">FieldRemoveChoices</a>($dbid, $fid, $choices)</td><td><a class="el" href="classQuickBaseAPI.html">QuickBaseAPI</a></td><td></td></tr>
@@ -152,7 +152,7 @@ This is the complete list of members for <a class="el" href="classQuickBaseAPI.h
   <tr class="memlist"><td><a class="el" href="classQuickBaseAPI.html#aaeadc9221e195504e9be106f952b2ac2">GrantedDBs</a>($params=array())</td><td><a class="el" href="classQuickBaseAPI.html">QuickBaseAPI</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="classQuickBaseAPI.html#a2ca0bac50cea089605dc970f4427f206">ImportFromCSV</a>($dbid, $records_csv, $clist=array(), $options=array())</td><td><a class="el" href="classQuickBaseAPI.html">QuickBaseAPI</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="classQuickBaseAPI.html#a5f061481de0dfe39f78f6b4e85746e8e">ProvisionUser</a>($dbid, $email, $fname, $lname, $roleid=NULL)</td><td><a class="el" href="classQuickBaseAPI.html">QuickBaseAPI</a></td><td></td></tr>
-  <tr class="memlist"><td><a class="el" href="classQuickBaseAPI.html#a7c93b71a755d8a6deac8ab3c53df4567">PurgeRecords</a>($dbid, $query=NULL)</td><td><a class="el" href="classQuickBaseAPI.html">QuickBaseAPI</a></td><td></td></tr>
+  <tr class="memlist"><td><a class="el" href="classQuickBaseAPI.html#a81fd47cd433d6ee33fbf7ad27ec48010">PurgeRecords</a>($dbid, $query=NULL, $op= 'AND')</td><td><a class="el" href="classQuickBaseAPI.html">QuickBaseAPI</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="classQuickBaseAPI.html#a59a759bfceda6800456973357c99586a">RemoveUserFromRole</a>($dbid, $userid, $roleid)</td><td><a class="el" href="classQuickBaseAPI.html">QuickBaseAPI</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="classQuickBaseAPI.html#a42a47a169f0416435e82ea6a9cd2f7ee">RenameApp</a>($dbid, $newappname)</td><td><a class="el" href="classQuickBaseAPI.html">QuickBaseAPI</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="classQuickBaseAPI.html#a959409bf092d6c2c8d3ef8a28da59dc8">RunImport</a>($dbid, $id)</td><td><a class="el" href="classQuickBaseAPI.html">QuickBaseAPI</a></td><td></td></tr>
@@ -184,7 +184,7 @@ This is the complete list of members for <a class="el" href="classQuickBaseAPI.h
   <div id="nav-path" class="navpath">
     <ul>
 
-    <li class="footer">Generated on Tue May 14 2013 16:46:47 for Intuit QuickBase API - PHP Class Library by
+    <li class="footer">Generated on Wed May 29 2013 17:21:30 for Intuit QuickBase API - PHP Class Library by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.6.1 </li>
    </ul>
