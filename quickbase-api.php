@@ -751,10 +751,11 @@ class QuickBaseAPI {
    *                  Array of one or more queries (e.g. {'5'.CT.'Ragnar Lodbrok'})
    *                  Query ID (numeric)
    *                  Query name (alphanumeric)
+   * @param op        Operation to use for multiple query strings - [AND | OR] defaults to AND
    * 
    * @return Returns FALSE on error, response object on success
    */
-  public function DoQueryCount($dbid, $query = NULL) {
+  public function DoQueryCount($dbid, $query = NULL, $op = 'AND') {
     $resp = FALSE;
     if ($this->Authenticate()) {
       $params = array();
@@ -766,7 +767,8 @@ class QuickBaseAPI {
       }
       elseif (is_array($query)) {
         // Handle array of queries
-        $params['query'] = $query;
+        $op = (!empty($op)) ? $op : 'AND';
+        $params['query'] = implode($op, $query);
       }
       elseif (!empty($query)) {
         // Assume anything else is a query name
@@ -968,6 +970,7 @@ class QuickBaseAPI {
    *                  returnpercentage    Specifies whether Numeric - Percent values in the returned data will be percentage format (10% is shown as 10) or decimal format (10% is shown as .1)
    *                  options             Specifies return options for the query (see API call page)
    *                  includeRids         Specifies that the record IDs of each record should be returned
+   *                  op                  Operation to use for multiple query strings - [AND | OR] defaults to AND
    * 
    * @return Returns FALSE on error, response object on success
    */
@@ -983,7 +986,8 @@ class QuickBaseAPI {
       }
       elseif (is_array($query)) {
         // Handle array of queries
-        $params['query'] = $query;
+        $op = (!empty($options['op'])) ? $options['op'] : 'AND';
+        $params['query'] = implode($op, $query);
       }
       elseif (!empty($query)) {
         // Assume anything else is a query name
@@ -1332,10 +1336,11 @@ class QuickBaseAPI {
    *                  Array of one or more queries (e.g. {'5'.CT.'Ragnar Lodbrok'})
    *                  Query ID (numeric)
    *                  Query name (alphanumeric)
+   * @param op        Operation to use for multiple query strings - [AND | OR] defaults to AND
    * 
    * @return Returns FALSE on error, response object on success
    */
-  public function PurgeRecords($dbid, $query = NULL) {
+  public function PurgeRecords($dbid, $query = NULL, $op = 'AND') {
     $resp = FALSE;
     if ($this->Authenticate()) {
       $params = array();
@@ -1347,7 +1352,8 @@ class QuickBaseAPI {
       }
       elseif (is_array($query)) {
         // Handle array of queries
-        $params['query'] = $query;
+        $op = (!empty($op)) ? $op : 'AND';
+        $params['query'] = implode($op, $query);
       }
       elseif (!empty($query)) {
         // Assume anything else is a query name
